@@ -3,8 +3,9 @@ using System.Linq;
 using System;
 
 using NUnit.Framework;
-using MMABooksEFClasses.MarisModels;
+//using MMABooksEFClasses.MarisModels;
 using Microsoft.EntityFrameworkCore;
+using MMABooksEFClasses.Models;
 
 namespace MMABooksTests
 {
@@ -17,6 +18,7 @@ namespace MMABooksTests
         State? s;
         List<State>? states;
 
+      
         [SetUp]
         public void Setup()
         {
@@ -24,11 +26,12 @@ namespace MMABooksTests
             dbContext.Database.ExecuteSqlRaw("call usp_testingResetData()");
         }
 
+       
         [Test]
         public void GetAllTest()
         {
             states = dbContext.States.OrderBy(s => s.StateName).ToList();
-            Assert.AreEqual(52, states.Count);
+            Assert.AreEqual(54, states.Count);
             Assert.AreEqual("Alabama", states[0].StateName);
             PrintAll(states);
         }
@@ -54,6 +57,9 @@ namespace MMABooksTests
         [Test]
         public void GetWithCustomersTest()
         {
+            //When you run the test you don;t see the customers becuase we didn't have it output to anywhere
+            //So lets debug this test so you can see all the customers. 
+            //put a break on Assert.IsNOtNull(s); Run Debug Test. In Autos click on Customers --> View down arrow to see all of the customers
             s = dbContext.States.Include("Customers").Where(s => s.StateCode == "OR").SingleOrDefault();
             Assert.IsNotNull(s);
             Assert.AreEqual("Ore", s.StateName);
@@ -64,21 +70,33 @@ namespace MMABooksTests
         [Test]
         public void DeleteTest()
         {
-            s = dbContext.States.Find("HI");
+            s = dbContext.States.Find("??");
             dbContext.States.Remove(s);
             dbContext.SaveChanges();
-            Assert.IsNull(dbContext.States.Find("HI"));
+            Assert.IsNull(dbContext.States.Find("??"));
         }
 
         [Test]
         public void CreateTest()
         {
+            s = new State();
+            s.StateCode = "??";
+            s.StateName = "Where am I";
+            dbContext.States.Add(s);
+            dbContext.SaveChanges();
+            Assert.IsNotNull(dbContext.States.Find("??"));
 
         }
 
         [Test]
         public void UpdateTest()
         {
+            s = dbContext.States.Find("OR");
+            s.StateName = "Ore";
+            dbContext.States.Update(s);
+            dbContext.SaveChanges();
+            s = dbContext.States.Find("OR");
+            Assert.AreEqual("Ore", s.StateName);
 
         }
 

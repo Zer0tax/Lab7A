@@ -1,4 +1,12 @@
-﻿using System;
+﻿/* Author:  Lindy Stewart
+ * Editor:  Eric Robinson L00709820
+ * Date:    11/25/23
+ * Course:  Lane Community College CS234 Advanced Programming: C# (.NET)
+ * Lab:     6 
+ * Purpose: 
+ */
+
+using System;
 
 using Microsoft.Extensions.Configuration;
 
@@ -19,11 +27,13 @@ namespace MMABooksEFClasses
             string folder = System.AppContext.BaseDirectory;
             var builder = new ConfigurationBuilder()
                     .SetBasePath(folder)
+                    // Next line points us to the .JSON file with our password.
                     .AddJsonFile("mySqlSettings.json", optional: true, reloadOnChange: true);
 
             string connectionString = builder.Build().GetConnectionString("mySql");
 
             return connectionString;
         }
-    }
-}
+
+    } // end class ConfigDB
+} // end namespace MMABooksEFClasses
